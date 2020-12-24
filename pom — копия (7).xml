@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bigbrassband.common</groupId>
+    <artifactId>jira-git-common</artifactId>
+    <version>1.0.115</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <jgit.version>5.9.0.202009080501-r</jgit.version><!--do not upgrade jgit because of NTLM authentication support -->
+
+        <!-- SonarCloud Configuration -->
+        <sonar.projectKey>BigBrassBand_jira-git-common</sonar.projectKey>
+        <sonar.organization>bigbrassband</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.login>2b2a4eae4ac9d4576da2326c1c8cdb1ffa5d9a74</sonar.login>
+    </properties>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.1</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+                <execution>
+                    <id>cleanupRsaDsa</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>clean</goal>
+                    </goals>
+                <configuration>
+                  <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.outputDirectory}/META-INF</directory>
+                      <includes>
+                        <include>**/*.DSA</include>
+                        <include>**/*.RSA</include>
+                      </includes>
+                      <followSymlinks>false</followSymlinks>
+                    </fileset>
+                  </filesets>
+                </configuration>
+                </execution>
+            </executions>
+          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <artifactSet>
+                        <includes>
+                            <include>com.bigbrassband.common:jira-git-common*</include>
+                            <include>org.eclipse.jgit:org.eclipse.jgit</include>
+                            <include>org.eclipse.jgit:org.eclipse.jgit.ssh.jsch</include>
+                            <include>com.jcraft:jsch</include>
+                            <include>com.jcraft:jzlib</include>
+                            <include>com.googlecode.javaewah:JavaEWAH</include>
+                            <include>org.bouncycastle:bcpg-jdk15on</include>
+                            <include>org.bouncycastle:bcprov-jdk15on</include>
+                            <include>org.bouncycastle:bcpkix-jdk15on</include>
+                        </includes>
+                    </artifactSet>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                                <exclude>META-INF/DEPENDENCIES</exclude>
+                                <exclude>META-INF/DEPENDENCIES.*</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/NOTICE.*</exclude>
+                                <exclude>META-INF/README</exclude>
+                                <exclude>META-INF/README.*</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.*</exclude>
+                                <exclude>META-INF/license/LICENSE.*</exclude>
+                                <exclude>**/module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jgit</groupId>
+                                    <artifactId>org.eclipse.jgit</artifactId>
+                                    <version>${jgit.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>target/classes</outputDirectory>
+                                    <includes>**/jgit/**/*.class,**/jgit/**/*.xml</includes>
+                                    <excludes>**/*.RSA,**/*.DSA,**/*.SF</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.10</version>
+                <configuration>
+                    <complianceLevel>1.8</complianceLevel>
+                    <source>1.8</source>
+                    <target>1.8</target>
+
+                    <weaveDependencies>
+                        <weaveDependency>
+                            <groupId>org.eclipse.jgit</groupId>
+                            <artifactId>org.eclipse.jgit</artifactId>
+                        </weaveDependency>
+                    </weaveDependencies>
+
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.eclipse.jgit</groupId>
+                            <artifactId>org.eclipse.jgit</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>compile</goal>       <!-- use this goal to weave all your main classes -->
+                            <!--<goal>test-compile</goal>  &lt;!&ndash; use this goal to weave all your test classes &ndash;&gt;-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <skipTests>false</skipTests>
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub BigBrassBand Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/BigBrassBand/jira-git-common</url>
+		</repository>
+    </distributionManagement>
+    <repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub BigBrassBand Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/BigBrassBand/jira-git-common</url>
+		</repository>
+        <repository>
+            <id>jgit-repository</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${jgit.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.http.server</artifactId>
+            <version>${jgit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+            <version>${jgit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.4.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.12</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+
+        <!-- Please don't forget to update jackson versions in jira-git-server too -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.10.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.10.3</version>
+		</dependency>
+
+       <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20190722</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.burt</groupId>
+            <artifactId>jmespath-jackson</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- AOP for overriding jgit pack files manipulation behavior -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.9</version>
+        </dependency>
+    </dependencies>
+</project>

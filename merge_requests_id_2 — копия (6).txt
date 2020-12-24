@@ -1,0 +1,81 @@
+{
+    "id": 79242532,
+    "iid": 2,
+    "project_id": 22656430,
+    "title": "WWW",
+    "description": null,
+    "state": "opened",
+    "created_at": "2020-11-24T05:06:28.330Z",
+    "updated_at": "2020-11-24T05:06:28.330Z",
+    "merged_by": null,
+    "merged_at": null,
+    "closed_by": null,
+    "closed_at": null,
+    "target_branch": "master",
+    "source_branch": "test2",
+    "user_notes_count": 0,
+    "upvotes": 0,
+    "downvotes": 0,
+    "author": {
+        "id": 4866242,
+        "name": "Artrem Golubnichenko",
+        "username": "agolubnichenko-bbb",
+        "state": "active",
+        "avatar_url": "https://secure.gravatar.com/avatar/c02bdaf6de6ac1699096ee7716fede35?s=80\u0026d=identicon",
+        "web_url": "https://gitlab.com/agolubnichenko-bbb"
+    },
+    "assignees": [],
+    "assignee": null,
+    "reviewers": [],
+    "source_project_id": 22656430,
+    "target_project_id": 22656430,
+    "labels": [],
+    "work_in_progress": false,
+    "milestone": null,
+    "merge_when_pipeline_succeeds": false,
+    "merge_status": "can_be_merged",
+    "sha": "e23d1fc9032a79e591f7550764f6f6793b8e100a",
+    "merge_commit_sha": null,
+    "squash_commit_sha": null,
+    "discussion_locked": null,
+    "should_remove_source_branch": null,
+    "force_remove_source_branch": null,
+    "reference": "!2",
+    "references": {
+        "short": "!2",
+        "relative": "!2",
+        "full": "agolubnichenko-bbb/4165!2"
+    },
+    "web_url": "https://gitlab.com/agolubnichenko-bbb/4165/-/merge_requests/2",
+    "time_stats": {
+        "time_estimate": 0,
+        "total_time_spent": 0,
+        "human_time_estimate": null,
+        "human_total_time_spent": null
+    },
+    "squash": false,
+    "task_completion_status": {
+        "count": 0,
+        "completed_count": 0
+    },
+    "has_conflicts": false,
+    "blocking_discussions_resolved": true,
+    "approvals_before_merge": null,
+    "subscribed": true,
+    "changes_count": "1",
+    "latest_build_started_at": null,
+    "latest_build_finished_at": null,
+    "first_deployed_to_production_at": null,
+    "pipeline": null,
+    "head_pipeline": null,
+    "diff_refs": {
+        "base_sha": "5a66e5b32b4e91030362210714e9580ce3bfaebd",
+        "head_sha": "e23d1fc9032a79e591f7550764f6f6793b8e100a",
+        "start_sha": "5a66e5b32b4e91030362210714e9580ce3bfaebd"
+    },
+    "merge_error": null,
+    "first_contribution": false,
+    "user": {
+        "can_merge": true
+    }
+}
