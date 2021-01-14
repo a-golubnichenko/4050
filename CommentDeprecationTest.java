@@ -208,7 +208,7 @@ public class CommentDeprecationTest extends LocalRepositoryTest {
         }
         String initialCommit = commit("Added file", file);
 
-        // append line to the end
+        // append line to the endff
         FileUtil.appendLine(file, "last line");
         String commentCommit = commit("Modified file", file);
 
